@@ -188,6 +188,35 @@
   }
   .field input[type="text"]:focus { border-bottom-color: var(--accent); }
 
+  .field textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid var(--rule);
+    border-radius: 4px;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.15s;
+  }
+  .field textarea:focus { border-color: var(--accent); }
+  .field textarea::placeholder { color: var(--ink-soft); font-style: italic; }
+
+  .word-counter {
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    text-align: right;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+  .word-counter.over { color: #C04A3A; font-style: normal; }
+
   .field-with-btn {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -386,6 +415,18 @@
     margin-top: 0.5rem;
   }
 
+  .card-comment {
+    margin-top: 1.25rem;
+    padding: 0.75rem 0 0.75rem 1rem;
+    border-left: 2px solid var(--accent);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    font-weight: 300;
+  }
+  .card-comment:empty { display: none; }
+
   .card-map-wrap {
     margin-top: 1.25rem;
     padding-top: 1rem;
@@ -546,6 +587,16 @@
     color: var(--accent);
     margin-top: 0.35rem;
   }
+  .gallery-card .gallery-comment {
+    margin-top: 1rem;
+    padding: 0.6rem 0 0.6rem 0.85rem;
+    border-left: 2px solid var(--accent);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    font-weight: 300;
+  }
   .gallery-card .small-map {
     height: 80px;
     margin-top: 1rem;
@@ -646,6 +697,12 @@
       <div class="section-label spaced">Paleta emocional</div>
       <div id="emotions"></div>
 
+      <div class="section-label spaced">Comentario sobre el lugar</div>
+      <div class="field">
+        <textarea id="comment" maxlength="500" rows="3" placeholder="¿Qué tiene este lugar? ¿Por qué lo elegiste?"></textarea>
+        <div class="word-counter"><span id="wordCount">0</span> / 50 palabras</div>
+      </div>
+
       <div class="actions">
         <button onclick="regenerate()">Regenerar forma</button>
         <button class="ghost" onclick="downloadSVG()">Descargar SVG</button>
@@ -664,6 +721,7 @@
             <div class="space-tag" id="cardSpaceTag">Espacio público / abierto</div>
           </div>
         </div>
+        <div class="card-comment" id="cardComment"></div>
         <div class="card-map-wrap">
           <div id="cardMap" class="card-map"></div>
           <div class="card-coords" id="cardCoords">—</div>
@@ -985,6 +1043,24 @@ function update() {
   if (cardMarker) cardMarker.setIcon(makePin(dominantColor()));
 }
 
+function countWords(s) {
+  const trimmed = (s || '').trim();
+  if (!trimmed) return 0;
+  return trimmed.split(/\s+/).length;
+}
+
+function updateComment() {
+  const el = document.getElementById('comment');
+  const text = el.value.trim();
+  const words = countWords(text);
+  const counter = document.querySelector('.word-counter');
+  document.getElementById('wordCount').textContent = words;
+  counter.classList.toggle('over', words > 50);
+  document.getElementById('cardComment').textContent = text;
+}
+
+document.getElementById('comment').addEventListener('input', updateComment);
+
 function regenerate() {
   seed = Math.floor(Math.random() * 1e9);
   renderBlob();
@@ -1001,6 +1077,7 @@ function buildPayload() {
     lat: Number(currentLat.toFixed(6)),
     lng: Number(currentLng.toFixed(6)),
     space_type: currentSpace,
+    comment: document.getElementById('comment').value.trim(),
     seed,
     emotions: getIntensitiesObj(),
     generated_at: new Date().toISOString()
@@ -1091,6 +1168,7 @@ function renderGallery(cartas) {
     const id = `gallery-card-${i}-${slug(c.place)}`;
     const hasCoords = typeof c.lat === 'number' && typeof c.lng === 'number';
     const space = c.space_type ? spaceLabel(c.space_type) : '';
+    const comment = (c.comment || '').trim();
     return `
       <article class="gallery-card" id="${id}">
         <div class="card-row">
@@ -1101,6 +1179,7 @@ function renderGallery(cartas) {
             ${space ? `<div class="space-tag">${space}</div>` : ''}
           </div>
         </div>
+        ${comment ? `<div class="gallery-comment">${escapeHTML(comment)}</div>` : ''}
         ${hasCoords ? `<div class="small-map" id="miniMap-${i}"></div>` : ''}
       </article>
     `;
