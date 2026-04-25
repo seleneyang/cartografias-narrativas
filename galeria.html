@@ -4,22 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Galería · Cartografías narrativas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
+  @font-face {
+    font-family: 'Datatype';
+    src: url('fonts/Datatype-Thin.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Datatype';
+    src: url('fonts/Datatype-ExtraLight.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'ElmsSans';
+    src: url('fonts/ElmsSans-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'ElmsSans';
+    src: url('fonts/ElmsSans-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
-    --paper: #f5ecd9;
-    --paper-deep: #ede1c7;
-    --card: #fffbf2;
-    --ink: #2d2520;
-    --ink-soft: #6b5d50;
-    --accent: #e76f51;
-    --rule: rgba(45, 37, 32, 0.12);
+    --paper: #f4ede0;
+    --paper-deep: #e8dfce;
+    --card: #fdf9ee;
+    --ink: #2B2D42;
+    --ink-soft: #6c6a78;
+    --accent: #C78283;
+    --rule: rgba(43, 45, 66, 0.14);
   }
 
   * { box-sizing: border-box; }
@@ -28,7 +54,8 @@
     padding: 3rem 1.5rem 5rem;
     background: var(--paper);
     color: var(--ink);
-    font-family: 'Lora', Georgia, serif;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
     min-height: 100vh;
   }
 
@@ -37,31 +64,33 @@
   header { margin-bottom: 3rem; }
   .eyebrow {
     display: inline-block;
-    font-family: 'Caveat', cursive;
-    font-size: 1.3rem;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
     color: var(--accent);
-    transform: rotate(-2deg);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
   h1 {
-    font-family: 'Caveat', cursive;
-    font-weight: 700;
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
     font-size: clamp(2.5rem, 6vw, 4rem);
-    line-height: 0.95;
-    color: var(--accent);
-    margin: 0.25rem 0 0.75rem;
+    line-height: 1;
+    color: var(--ink);
+    margin: 0.5rem 0 0.75rem;
+    letter-spacing: -0.01em;
   }
-  .lead { max-width: 600px; color: var(--ink-soft); line-height: 1.55; }
+  .lead { max-width: 600px; color: var(--ink-soft); line-height: 1.6; font-weight: 300; }
 
   .section-title {
-    font-family: 'Caveat', cursive;
-    font-size: 2rem;
-    color: var(--accent);
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 1.8rem;
+    color: var(--ink);
     margin: 3.5rem 0 1.25rem;
-    transform: rotate(-1deg);
-    display: inline-block;
+    letter-spacing: -0.005em;
   }
 
-  /* cartas */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -73,16 +102,16 @@
     border: 1px solid var(--rule);
     border-radius: 8px;
     padding: 1.25rem 1.5rem;
-    box-shadow: 0 2px 4px rgba(45, 37, 32, 0.04), 0 12px 28px rgba(45, 37, 32, 0.06);
-    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(43, 45, 66, 0.04), 0 12px 28px rgba(43, 45, 66, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
     scroll-margin-top: 2rem;
   }
-  .card:nth-child(odd)  { transform: rotate(-0.6deg); }
-  .card:nth-child(even) { transform: rotate(0.5deg); }
-  .card:hover { transform: translateY(-3px) rotate(0deg); }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(43, 45, 66, 0.06), 0 18px 36px rgba(43, 45, 66, 0.1);
+  }
   .card.highlight {
-    box-shadow: 0 0 0 3px var(--accent), 0 12px 28px rgba(45, 37, 32, 0.1);
-    transform: rotate(0deg) translateY(-3px) !important;
+    box-shadow: 0 0 0 3px var(--accent), 0 12px 28px rgba(43, 45, 66, 0.1);
   }
 
   .card-row {
@@ -93,16 +122,21 @@
   }
   .blob { width: 130px; height: 130px; flex-shrink: 0; }
   .place {
-    font-size: 0.95rem;
-    color: var(--ink);
-    margin: 0 0 0.9rem;
-    line-height: 1.35;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.85rem;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
   }
   .author {
-    font-family: 'Caveat', cursive;
-    font-size: 1.6rem;
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 1.7rem;
     color: var(--ink);
     line-height: 1;
+    letter-spacing: -0.005em;
   }
 
   .card-map {
@@ -121,31 +155,30 @@
     font-style: italic;
   }
 
-  /* mapa grande */
   #bigMap {
     height: 520px;
     border-radius: 8px;
     border: 1px solid var(--rule);
-    box-shadow: 0 2px 4px rgba(45, 37, 32, 0.04), 0 12px 28px rgba(45, 37, 32, 0.06);
+    box-shadow: 0 2px 4px rgba(43, 45, 66, 0.04), 0 12px 28px rgba(43, 45, 66, 0.06);
     overflow: hidden;
   }
 
   .leaflet-container {
     background: var(--paper-deep) !important;
-    font-family: 'Lora', serif;
+    font-family: 'ElmsSans', system-ui, sans-serif;
   }
   .leaflet-tile-pane {
-    filter: sepia(0.35) saturate(0.75) brightness(1.02) contrast(0.95);
+    filter: sepia(0.25) saturate(0.7) brightness(1.02) contrast(0.92);
   }
   .leaflet-control-attribution {
     font-size: 9px !important;
-    background: rgba(255, 251, 242, 0.85) !important;
+    background: rgba(253, 249, 238, 0.85) !important;
   }
 
   .custom-pin {
     width: 20px; height: 20px;
     border-radius: 50%;
-    border: 3px solid #fffbf2;
+    border: 3px solid #fdf9ee;
     box-shadow: 0 1px 4px rgba(0,0,0,0.35);
     cursor: pointer;
   }
@@ -160,28 +193,30 @@
     box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   }
   .leaflet-popup-content {
-    font-family: 'Lora', serif;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
     margin: 0.75rem 1rem;
   }
-  .popup-place { font-size: 0.9rem; color: var(--ink); margin: 0 0 0.4rem; }
+  .popup-place { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 0.4rem; }
   .popup-author {
-    font-family: 'Caveat', cursive;
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
     font-size: 1.3rem;
-    color: var(--accent);
+    color: var(--ink);
     line-height: 1;
   }
   .popup-link {
     display: block;
     margin-top: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--ink-soft);
+    font-size: 0.78rem;
+    color: var(--accent);
     text-decoration: underline;
     cursor: pointer;
   }
 
   .attribution-note {
     margin-top: 2rem;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--ink-soft);
     text-align: center;
     font-style: italic;
@@ -213,22 +248,17 @@
 </div>
 
 <script>
-// ================================================================
-// ENDPOINT: debe ser el MISMO URL que pegaste en index.html
-// Si está vacío, la galería lee de cartas.json (modo manual)
-// ================================================================
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxaKMpyp9YmTdvpmn-LI7beUCPsPUbP_Icth5fk_m-TSSph_fSIReRCIRQkyx6njL72/exec';
 
-// Paleta — debe coincidir con la del generador
 const COLORS = {
-  alegria:    '#F4B942',
-  calidez:    '#E76F51',
-  amor:       '#E63946',
-  nostalgia:  '#B298DC',
-  melancolia: '#457B9D',
-  paz:        '#7FC4B2',
-  naturaleza: '#6BAA75',
-  sagrado:    '#6A4C93',
+  amor:       '#C78283',
+  calidez:    '#F9A03F',
+  alegria:    '#E8B547',
+  naturaleza: '#7B7554',
+  paz:        '#75B9BE',
+  melancolia: '#5C7B93',
+  nostalgia:  '#9C7A95',
+  sagrado:    '#2B2D42',
 };
 
 function mulberry32(a) {
@@ -245,10 +275,10 @@ function dominantColor(emotions) {
   for (const [k, v] of Object.entries(emotions)) {
     if (v > max) { max = v; key = k; }
   }
-  return COLORS[key] || '#e76f51';
+  return COLORS[key] || '#C78283';
 }
 
-function renderBlob(carta) {
+function renderBlob(carta, filterId) {
   const cx = 100, cy = 100;
   const rng = mulberry32(carta.seed);
   const pool = [];
@@ -276,7 +306,12 @@ function renderBlob(carta) {
   }).join('');
 
   return `<svg class="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <g style="mix-blend-mode: multiply">${circles}</g>
+    <defs>
+      <filter id="${filterId}" x="-10%" y="-10%" width="120%" height="120%">
+        <feGaussianBlur stdDeviation="1"/>
+      </filter>
+    </defs>
+    <g style="mix-blend-mode: multiply" filter="url(#${filterId})">${circles}</g>
   </svg>`;
 }
 
@@ -304,18 +339,17 @@ function makePin(color, big = false) {
 function renderGallery(cartas) {
   const grid = document.getElementById('grid');
   if (!cartas.length) {
-    grid.innerHTML = '<div class="status">Todavía no hay tarjetas. Generá la primera con <code>index.html</code>.</div>';
+    grid.innerHTML = '<div class="status">Todavía no hay tarjetas. Generá la primera.</div>';
     return;
   }
 
-  // HTML de las tarjetas con un div vacío para el mapa
   grid.innerHTML = cartas.map((c, i) => {
     const id = `card-${i}-${slug(c.place)}`;
     const hasCoords = typeof c.lat === 'number' && typeof c.lng === 'number';
     return `
       <article class="card" id="${id}">
         <div class="card-row">
-          ${renderBlob(c)}
+          ${renderBlob(c, `wc-${i}`)}
           <div>
             <p class="place">${escapeHTML(c.place)}</p>
             <div class="author">${escapeHTML(c.author)}</div>
@@ -326,7 +360,6 @@ function renderGallery(cartas) {
     `;
   }).join('');
 
-  // Instanciar los mini-mapas después que el DOM esté listo
   cartas.forEach((c, i) => {
     if (typeof c.lat !== 'number' || typeof c.lng !== 'number') return;
     const el = document.getElementById(`miniMap-${i}`);
@@ -367,7 +400,7 @@ function renderBigMap(cartas) {
   }).addTo(bigMap);
 
   const markers = [];
-  withCoords.forEach((c, i) => {
+  withCoords.forEach((c) => {
     const color = dominantColor(c.emotions);
     const m = L.marker([c.lat, c.lng], { icon: makePin(color, true) }).addTo(bigMap);
     const id = `card-${cartas.indexOf(c)}-${slug(c.place)}`;
@@ -379,7 +412,6 @@ function renderBigMap(cartas) {
     markers.push(m);
   });
 
-  // Ajustar el zoom para que entren todos los puntos
   if (withCoords.length > 1) {
     const group = L.featureGroup(markers);
     bigMap.fitBounds(group.getBounds().pad(0.3));
@@ -387,7 +419,6 @@ function renderBigMap(cartas) {
     bigMap.setView([withCoords[0].lat, withCoords[0].lng], 13);
   }
 
-  // Click en "ver la tarjeta" del popup = scroll hasta ella
   bigMap.on('popupopen', e => {
     const link = e.popup._contentNode.querySelector('.popup-link');
     if (!link) return;
@@ -404,12 +435,6 @@ function renderBigMap(cartas) {
   setTimeout(() => bigMap.invalidateSize(), 300);
 }
 
-// ==========================================================
-// Carga de datos:
-// 1º intenta el endpoint (Apps Script) si está configurado
-// 2º intenta cartas.json local
-// 3º muestra ejemplos
-// ==========================================================
 async function loadCards() {
   if (ENDPOINT) {
     try {
@@ -439,14 +464,14 @@ async function loadCards() {
 }
 
 const EJEMPLOS = [
-  { author: 'Munirah', place: 'La casa de la infancia',  lat: 1.3521,  lng: 103.8198, seed: 12345,
-    emotions: { alegria: 2, calidez: 7, amor: 4, nostalgia: 8, melancolia: 2, paz: 5, naturaleza: 3, sagrado: 0 } },
-  { author: 'Amanda',  place: 'Playa Gwangalli, Busan',  lat: 35.1531, lng: 129.1185, seed: 67890,
-    emotions: { alegria: 6, calidez: 4, amor: 2, nostalgia: 3, melancolia: 1, paz: 6, naturaleza: 4, sagrado: 0 } },
-  { author: 'Aishah',  place: 'Mezquita Old Assyakirin', lat: 1.3089,  lng: 103.8501, seed: 24680,
-    emotions: { alegria: 2, calidez: 3, amor: 6, nostalgia: 4, melancolia: 1, paz: 5, naturaleza: 0, sagrado: 9 } },
-  { author: 'Sele',    place: 'El patio de San Rafael',  lat: 9.8872,  lng: -83.9895, seed: 98765,
-    emotions: { alegria: 4, calidez: 5, amor: 2, nostalgia: 2, melancolia: 0, paz: 7, naturaleza: 8, sagrado: 1 } },
+  { author: 'Munirah', place: 'La casa de la infancia', lat: 1.3521, lng: 103.8198, seed: 12345,
+    emotions: { amor: 4, calidez: 7, alegria: 2, naturaleza: 3, paz: 5, melancolia: 2, nostalgia: 8, sagrado: 0 } },
+  { author: 'Amanda',  place: 'Playa Gwangalli, Busan', lat: 35.1531, lng: 129.1185, seed: 67890,
+    emotions: { amor: 2, calidez: 4, alegria: 6, naturaleza: 4, paz: 6, melancolia: 1, nostalgia: 3, sagrado: 0 } },
+  { author: 'Aishah',  place: 'Mezquita Old Assyakirin', lat: 1.3089, lng: 103.8501, seed: 24680,
+    emotions: { amor: 6, calidez: 3, alegria: 2, naturaleza: 0, paz: 5, melancolia: 1, nostalgia: 4, sagrado: 9 } },
+  { author: 'Sele',    place: 'El patio de San Rafael', lat: 9.8872, lng: -83.9895, seed: 98765,
+    emotions: { amor: 2, calidez: 5, alegria: 4, naturaleza: 8, paz: 7, melancolia: 0, nostalgia: 2, sagrado: 1 } },
 ];
 
 loadCards();
