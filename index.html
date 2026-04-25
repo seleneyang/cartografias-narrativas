@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartografías narrativas</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+  @font-face {
+    font-family: 'Datatype';
+    src: url('fonts/Datatype-Thin.ttf') format('truetype');
+    font-weight: 200; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Datatype';
+    src: url('fonts/Datatype-ExtraLight.ttf') format('truetype');
+    font-weight: 300; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'ElmsSans';
+    src: url('fonts/ElmsSans-ExtraLight.ttf') format('truetype');
+    font-weight: 200; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'ElmsSans';
+    src: url('fonts/ElmsSans-Light.ttf') format('truetype');
+    font-weight: 300; font-style: normal; font-display: swap;
+  }
+
+  :root {
+    --paper: #f4ede0;
+    --paper-deep: #e8dfce;
+    --card: #fdf9ee;
+    --ink: #2B2D42;
+    --ink-soft: #6c6a78;
+    --accent: #C78283;
+    --rule: rgba(43, 45, 66, 0.14);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image:
+      radial-gradient(circle at 20% 30%, transparent 0, rgba(123, 117, 84, 0.04) 40%, transparent 50%),
+      radial-gradient(circle at 80% 70%, transparent 0, rgba(123, 117, 84, 0.05) 30%, transparent 50%);
+    z-index: 1;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ====== HEADER + SOCIAL ====== */
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    background: var(--paper);
+    color: var(--ink);
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+    text-decoration: none;
+  }
+  .social-link:hover {
+    background: var(--ink);
+    color: var(--paper);
+    transform: translateY(-2px);
+  }
+  .social-link svg { width: 18px; height: 18px; }
+
+  header.intro { margin-bottom: 2.5rem; }
+  .eyebrow {
+    display: inline-block;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    line-height: 1;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .lead {
+    max-width: 640px;
+    margin: 1.25rem 0 0;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+  .lead .intro-line {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+
+  /* ====== LAYOUT GENERADOR ====== */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .layout { grid-template-columns: 400px 1fr; gap: 3rem; }
+    .stage { position: sticky; top: 2rem; }
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 2px rgba(43, 45, 66, 0.04), 0 8px 24px rgba(43, 45, 66, 0.06);
+  }
+
+  .section-label {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 1.4rem;
+    color: var(--ink);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.005em;
+  }
+  .section-label.spaced { margin-top: 1.75rem; }
+
+  .field { margin-bottom: 0.9rem; }
+  .field label.main {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-soft);
+    margin-bottom: 0.3rem;
+    font-weight: 300;
+  }
+  .field input[type="text"] {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--rule);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input[type="text"]:focus { border-bottom-color: var(--accent); }
+
+  .field-with-btn {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    align-items: end;
+  }
+
+  .mini-map-editor {
+    height: 200px;
+    border-radius: 4px;
+    margin-top: 0.6rem;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .map-hint {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-top: 0.4rem;
+    font-weight: 300;
+  }
+  .map-hint .coords {
+    font-family: 'ElmsSans', monospace;
+    color: var(--ink);
+  }
+
+  /* ====== TIPO DE ESPACIO ====== */
+  .space-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .space-btn {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    padding: 0.65rem 0.5rem;
+    border: 1.5px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+  .space-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .space-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  /* ====== EMOCIONES ====== */
+  .emo {
+    display: grid;
+    grid-template-columns: 22px 1fr 32px;
+    gap: 0.65rem;
+    align-items: center;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .emo:last-child { border-bottom: none; }
+  .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+  .emo-label {
+    font-size: 0.92rem;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-weight: 300;
+  }
+  .emo-slider {
+    width: 100%;
+    appearance: none;
+    height: 3px;
+    background: var(--rule);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .emo-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--card);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+  }
+  .emo-slider::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--card);
+    cursor: pointer;
+  }
+  .emo-val {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 1.25rem;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1;
+  }
+
+  /* ====== ACCIONES ====== */
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--rule);
+  }
+  button {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    padding: 0.55rem 1rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    border: 1.5px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    letter-spacing: 0.02em;
+  }
+  button.ghost { background: transparent; color: var(--ink); }
+  button.small { font-size: 0.8rem; padding: 0.45rem 0.7rem; }
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 0 0 var(--accent);
+  }
+  button:active { transform: translateY(0); box-shadow: none; }
+  button:disabled { opacity: 0.5; cursor: wait; }
+
+  /* ====== TARJETA PREVIEW ====== */
+  .stage {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 1rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 2px 4px rgba(43, 45, 66, 0.05), 0 16px 40px rgba(43, 45, 66, 0.08);
+    max-width: 100%;
+    width: 520px;
+    position: relative;
+  }
+
+  .card-top {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .blob-svg { width: 180px; height: 180px; flex-shrink: 0; }
+
+  .card-meta .place-name {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    margin: 0 0 1rem;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+  .card-meta .author-name {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 2.2rem;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .card-meta .space-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-top: 0.5rem;
+  }
+
+  .card-map-wrap {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--rule);
+  }
+  .card-map {
+    height: 110px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+  }
+  .card-coords {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 0.5rem;
+    text-align: right;
+  }
+
+  @media (max-width: 500px) {
+    .card-top { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+    .blob-svg { width: 160px; height: 160px; }
+  }
+
+  /* ====== MAPAS LEAFLET ====== */
+  .leaflet-container {
+    background: var(--paper-deep) !important;
+    font-family: 'ElmsSans', system-ui, sans-serif;
+  }
+  .leaflet-tile-pane {
+    filter: sepia(0.25) saturate(0.7) brightness(1.02) contrast(0.92);
+  }
+  .leaflet-control-attribution {
+    font-size: 9px !important;
+    background: rgba(253, 249, 238, 0.85) !important;
+  }
+  .custom-pin {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 3px solid #fdf9ee;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .custom-pin.big {
+    width: 28px; height: 28px;
+    border-width: 4px;
+  }
+  .leaflet-popup-content-wrapper {
+    background: var(--card);
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .leaflet-popup-content {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    margin: 0.75rem 1rem;
+  }
+  .popup-place { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 0.4rem; }
+  .popup-author {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .popup-link {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* ====== GALERÍA INTEGRADA ====== */
+  .footer-note {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    border: 1.5px dashed var(--rule);
+    border-radius: 6px;
+    background: rgba(253, 249, 238, 0.5);
+  }
+  .footer-note p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+  .footer-note a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  .gallery-section {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--rule);
+  }
+  .section-title {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 2rem;
+    color: var(--ink);
+    margin: 0 0 1.5rem;
+    letter-spacing: -0.005em;
+  }
+  .section-title:not(:first-child) { margin-top: 3.5rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.75rem;
+  }
+  .gallery-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 4px rgba(43, 45, 66, 0.04), 0 12px 28px rgba(43, 45, 66, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    scroll-margin-top: 2rem;
+  }
+  .gallery-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(43, 45, 66, 0.06), 0 18px 36px rgba(43, 45, 66, 0.1);
+  }
+  .gallery-card.highlight {
+    box-shadow: 0 0 0 3px var(--accent), 0 12px 28px rgba(43, 45, 66, 0.1);
+  }
+  .card-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .blob { width: 130px; height: 130px; flex-shrink: 0; }
+  .gallery-card .place {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.5rem;
+    line-height: 1.4;
+  }
+  .gallery-card .author {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 1.65rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .gallery-card .space-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-top: 0.35rem;
+  }
+  .gallery-card .small-map {
+    height: 80px;
+    margin-top: 1rem;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+  .status {
+    text-align: center;
+    padding: 3rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    grid-column: 1 / -1;
+  }
+  #bigMap {
+    height: 520px;
+    border-radius: 8px;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 4px rgba(43, 45, 66, 0.04), 0 12px 28px rgba(43, 45, 66, 0.06);
+    overflow: hidden;
+  }
+  .attribution-note {
+    margin-top: 2rem;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-align: center;
+    font-style: italic;
+  }
+  .attribution-note a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Social bar -->
+  <div class="top-bar">
+    <a class="social-link" href="https://github.com/seleneyang/cartografias-narrativas" target="_blank" rel="noopener" aria-label="Repositorio en GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.111.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+    </a>
+    <a class="social-link" href="https://seleneyang.info/repositorios" target="_blank" rel="noopener" aria-label="Otros proyectos en seleneyang.info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2 a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a class="social-link" href="https://www.instagram.com/geochicasosm" target="_blank" rel="noopener" aria-label="Instagram de Geochicas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg>
+    </a>
+  </div>
+
+  <header class="intro">
+    <span class="eyebrow">un proyecto colectivo</span>
+    <h1>Cartografías narrativas</h1>
+    <p class="lead">
+      <span class="intro-line">Este es un proyecto de exploración para entender cuáles son los sentimientos que nos generan los espacios que habitamos.</span>
+      Contá un lugar que amás en una tarjeta: cada emoción se traduce en un color, la intensidad determina la mancha, y un punto en el mapa ancla el lugar al mundo.
+    </p>
+  </header>
+
+  <div class="layout">
+
+    <div class="panel">
+      <div class="section-label">Tu tarjeta</div>
+      <div class="field">
+        <label class="main" for="author">Nombre</label>
+        <input type="text" id="author" value="Sele" autocomplete="off">
+      </div>
+      <div class="field">
+        <label class="main" for="place">Nombre del lugar</label>
+        <input type="text" id="place" value="El patio de San Rafael" autocomplete="off">
+      </div>
+
+      <div class="section-label spaced">Ubicación</div>
+      <div class="field">
+        <label class="main" for="address">Dirección para buscar</label>
+        <div class="field-with-btn">
+          <input type="text" id="address" value="San Rafael, Cartago, Costa Rica" placeholder="ej. Clementi Ave 2, Singapore" autocomplete="off">
+          <button type="button" class="small" id="searchBtn" onclick="geocode()">Buscar</button>
+        </div>
+        <div class="map-hint">Click o arrastrá el pin para ajustar · <span class="coords" id="coordText">—</span></div>
+      </div>
+      <div id="editorMap" class="mini-map-editor"></div>
+
+      <div class="section-label spaced">Tipo de espacio</div>
+      <div class="space-toggle">
+        <button type="button" class="space-btn active" data-space="publico" onclick="setSpace('publico')">Espacio público / abierto</button>
+        <button type="button" class="space-btn" data-space="privado" onclick="setSpace('privado')">Espacio privado / cerrado</button>
+      </div>
+
+      <div class="section-label spaced">Paleta emocional</div>
+      <div id="emotions"></div>
+
+      <div class="actions">
+        <button onclick="regenerate()">Regenerar forma</button>
+        <button class="ghost" onclick="downloadSVG()">Descargar SVG</button>
+        <button class="ghost" onclick="exportJSON()">Exportar JSON</button>
+        <button id="sendBtn" onclick="sendToGallery()" style="display:none">Enviar a la galería</button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="card-top">
+          <svg class="blob-svg" id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="card-meta">
+            <div class="place-name" id="cardPlace">El patio de San Rafael</div>
+            <div class="author-name" id="cardAuthor">Sele</div>
+            <div class="space-tag" id="cardSpaceTag">Espacio público / abierto</div>
+          </div>
+        </div>
+        <div class="card-map-wrap">
+          <div id="cardMap" class="card-map"></div>
+          <div class="card-coords" id="cardCoords">—</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <p>El geocoding usa <a href="https://nominatim.openstreetmap.org/" target="_blank">Nominatim</a> (OpenStreetMap), gratuito. Si no encuentra la dirección, podés arrastrar el pin a mano.</p>
+  </div>
+
+  <!-- ===== GALERÍA INTEGRADA ===== -->
+  <section class="gallery-section">
+    <h2 class="section-title">Las tarjetas</h2>
+    <div id="grid" class="grid">
+      <div class="status">Cargando tarjetas…</div>
+    </div>
+
+    <h2 class="section-title">El mapa colectivo</h2>
+    <div id="bigMap"></div>
+
+    <p class="attribution-note">
+      Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>
+    </p>
+  </section>
+
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxaKMpyp9YmTdvpmn-LI7beUCPsPUbP_Icth5fk_m-TSSph_fSIReRCIRQkyx6njL72/exec';
+
+const EMOTIONS = [
+  { key: 'aceptacion',     label: 'Aceptación',    color: '#A8C5A0' },
+  { key: 'alegria',        label: 'Alegría',       color: '#E8B547' },
+  { key: 'angustia',       label: 'Angustia',      color: '#3D4565' },
+  { key: 'ansiedad',       label: 'Ansiedad',      color: '#B8A647' },
+  { key: 'cuidado',        label: 'Cuidado',       color: '#D9A0A8' },
+  { key: 'culpa',          label: 'Culpa',         color: '#8B6F4E' },
+  { key: 'empoderamiento', label: 'Empoderamiento',color: '#F9A03F' },
+  { key: 'frustracion',    label: 'Frustración',   color: '#B85450' },
+  { key: 'humillacion',    label: 'Humillación',   color: '#6F4E7C' },
+  { key: 'inseguridad',    label: 'Inseguridad',   color: '#8C8B9A' },
+  { key: 'libertad',       label: 'Libertad',      color: '#88B8D0' },
+  { key: 'miedo',          label: 'Miedo',         color: '#2B2D42' },
+  { key: 'preocupacion',   label: 'Preocupación',  color: '#7A8C99' },
+  { key: 'rabia',          label: 'Rabia',         color: '#C04A3A' },
+  { key: 'rechazo',        label: 'Rechazo',       color: '#9C7A5C' },
+  { key: 'seguridad',      label: 'Seguridad',     color: '#7B9579' },
+  { key: 'soledad',        label: 'Soledad',       color: '#5C7B93' },
+  { key: 'tranquilidad',   label: 'Tranquilidad',  color: '#75B9BE' },
+  { key: 'tristeza',       label: 'Tristeza',      color: '#3F5F88' },
+  { key: 'verguenza',      label: 'Vergüenza',     color: '#C78283' },
+];
+
+const COLORS = EMOTIONS.reduce((m, e) => { m[e.key] = e.color; return m; }, {});
+
+// ============================================================
+// ESTADO
+// ============================================================
+let currentLat = 9.8872;
+let currentLng = -83.9895;
+let currentSpace = 'publico';
+let seed = Math.floor(Math.random() * 1e9);
+
+// ============================================================
+// PRNG determinista
+// ============================================================
+function mulberry32(a) {
+  return function() {
+    let t = (a += 0x6D2B79F5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function escapeHTML(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+function slug(s) {
+  return (s || 'lugar').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function spaceLabel(t) {
+  return t === 'privado' ? 'Espacio privado / cerrado' : 'Espacio público / abierto';
+}
+
+// ============================================================
+// MAPAS
+// ============================================================
+const editorMap = L.map('editorMap', {
+  scrollWheelZoom: false,
+}).setView([currentLat, currentLng], 13);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; OpenStreetMap'
+}).addTo(editorMap);
+
+const cardMap = L.map('cardMap', {
+  zoomControl: false, dragging: false, scrollWheelZoom: false,
+  doubleClickZoom: false, boxZoom: false, keyboard: false,
+  touchZoom: false, attributionControl: false,
+}).setView([currentLat, currentLng], 13);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(cardMap);
+
+let editorMarker = null;
+let cardMarker = null;
+
+function dominantColor(emotionsObj) {
+  const ints = emotionsObj || getIntensitiesObj();
+  let max = 0, key = EMOTIONS[0].key;
+  for (const [k, v] of Object.entries(ints)) {
+    if (v > max) { max = v; key = k; }
+  }
+  return COLORS[key] || EMOTIONS[0].color;
+}
+
+function makePin(color, big = false) {
+  return L.divIcon({
+    className: '',
+    html: `<div class="custom-pin ${big ? 'big' : ''}" style="background:${color}"></div>`,
+    iconSize: big ? [28, 28] : [20, 20],
+    iconAnchor: big ? [14, 14] : [10, 10],
+  });
+}
+
+function setMarker(lat, lng) {
+  currentLat = lat;
+  currentLng = lng;
+  const pin = makePin(dominantColor());
+  if (!editorMarker) {
+    editorMarker = L.marker([lat, lng], { icon: pin, draggable: true }).addTo(editorMap);
+    editorMarker.on('dragend', e => {
+      const p = e.target.getLatLng();
+      currentLat = p.lat;
+      currentLng = p.lng;
+      updateCoords();
+      updateCardMap();
+    });
+  } else {
+    editorMarker.setLatLng([lat, lng]);
+    editorMarker.setIcon(pin);
+  }
+  updateCoords();
+  updateCardMap();
+}
+
+editorMap.on('click', e => {
+  setMarker(e.latlng.lat, e.latlng.lng);
+  editorMap.panTo(e.latlng);
+});
+
+function updateCoords() {
+  document.getElementById('coordText').textContent =
+    `${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
+  document.getElementById('cardCoords').textContent =
+    `${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
+}
+
+function updateCardMap() {
+  cardMap.setView([currentLat, currentLng], 13);
+  const pin = makePin(dominantColor());
+  if (!cardMarker) {
+    cardMarker = L.marker([currentLat, currentLng], { icon: pin }).addTo(cardMap);
+  } else {
+    cardMarker.setLatLng([currentLat, currentLng]);
+    cardMarker.setIcon(pin);
+  }
+  setTimeout(() => cardMap.invalidateSize(), 100);
+}
+
+async function geocode() {
+  const q = document.getElementById('address').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const data = await res.json();
+    if (data && data[0]) {
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      editorMap.setView([lat, lng], 14);
+      setMarker(lat, lng);
+    } else {
+      alert('No se encontró esa dirección. Probá otra variante o hacé click en el mapa.');
+    }
+  } catch (e) {
+    alert('El servicio de búsqueda no respondió. Podés ubicar el pin manualmente.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Buscar';
+  }
+}
+
+document.getElementById('address').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); geocode(); }
+});
+
+// ============================================================
+// TIPO DE ESPACIO
+// ============================================================
+function setSpace(value) {
+  currentSpace = value;
+  document.querySelectorAll('.space-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.space === value);
+  });
+  document.getElementById('cardSpaceTag').textContent = spaceLabel(value);
+}
+
+// ============================================================
+// FORMULARIO EMOCIONES
+// ============================================================
+function buildForm() {
+  const container = document.getElementById('emotions');
+  container.innerHTML = EMOTIONS.map(e => `
+    <div class="emo">
+      <div class="swatch" style="background:${e.color}"></div>
+      <div class="emo-label">
+        <span>${e.label}</span>
+        <input type="range" min="0" max="10" value="0" id="emo-${e.key}" class="emo-slider">
+      </div>
+      <div class="emo-val" id="val-${e.key}">0</div>
+    </div>
+  `).join('');
+  EMOTIONS.forEach(e => {
+    document.getElementById('emo-' + e.key).addEventListener('input', update);
+  });
+}
+
+function getIntensitiesObj() {
+  const obj = {};
+  EMOTIONS.forEach(e => {
+    obj[e.key] = parseInt(document.getElementById('emo-' + e.key).value, 10);
+  });
+  return obj;
+}
+
+// ============================================================
+// MANCHA — un círculo por emoción, tamaño = intensidad
+// ============================================================
+function buildBlobSVG(emotionsObj, seedValue) {
+  const rng = mulberry32(seedValue);
+  const cx = 100, cy = 100;
+  const circles = [];
+
+  // Solo emociones con valor > 0
+  const active = EMOTIONS
+    .map(e => ({ ...e, value: emotionsObj[e.key] || 0 }))
+    .filter(e => e.value > 0);
+
+  if (active.length === 0) return '';
+
+  // Ángulo base aleatorio para variedad entre tarjetas
+  const baseAngle = rng() * Math.PI * 2;
+
+  active.forEach((e, i) => {
+    // Posición: distribución gaussiana para que se agrupen alrededor del centro
+    // pero con un sesgo angular para evitar superposiciones masivas
+    const u1 = Math.max(1e-9, rng()), u2 = rng();
+    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+
+    // Si hay pocas activas, las agrupamos más; si son muchas, las dispersamos
+    const spread = Math.min(28, 12 + active.length * 1.2);
+    const x = cx + z0 * spread;
+    const y = cy + z1 * spread;
+
+    // Radio proporcional a intensidad: 6 (val=1) a 38 (val=10)
+    const r = 5 + e.value * 3.3 + (rng() - 0.5) * 1.5;
+
+    // Opacidad ligera para que las superposiciones se mezclen
+    const opacity = 0.55 + rng() * 0.15;
+
+    circles.push(`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${r.toFixed(2)}" fill="${e.color}" opacity="${opacity.toFixed(2)}"/>`);
+  });
+
+  return circles.join('');
+}
+
+function renderBlob() {
+  const svg = document.getElementById('blob');
+  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const inner = buildBlobSVG(getIntensitiesObj(), seed);
+  svg.innerHTML = `
+    <defs>
+      <filter id="watercolor" x="-10%" y="-10%" width="120%" height="120%">
+        <feGaussianBlur stdDeviation="1"/>
+      </filter>
+    </defs>
+    <g style="mix-blend-mode: multiply" filter="url(#watercolor)">${inner}</g>
+  `;
+}
+
+function update() {
+  EMOTIONS.forEach(e => {
+    const v = document.getElementById('emo-' + e.key).value;
+    document.getElementById('val-' + e.key).textContent = v;
+  });
+  document.getElementById('cardPlace').textContent =
+    document.getElementById('place').value || 'Un lugar';
+  document.getElementById('cardAuthor').textContent =
+    document.getElementById('author').value || 'Anónimo';
+  renderBlob();
+  if (editorMarker) editorMarker.setIcon(makePin(dominantColor()));
+  if (cardMarker) cardMarker.setIcon(makePin(dominantColor()));
+}
+
+function regenerate() {
+  seed = Math.floor(Math.random() * 1e9);
+  renderBlob();
+}
+
+// ============================================================
+// EXPORTAR / ENVIAR
+// ============================================================
+function buildPayload() {
+  return {
+    author: document.getElementById('author').value,
+    place: document.getElementById('place').value,
+    address: document.getElementById('address').value,
+    lat: Number(currentLat.toFixed(6)),
+    lng: Number(currentLng.toFixed(6)),
+    space_type: currentSpace,
+    seed,
+    emotions: getIntensitiesObj(),
+    generated_at: new Date().toISOString()
+  };
+}
+
+function downloadSVG() {
+  const inner = document.getElementById('blob').innerHTML;
+  const full = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="400" height="400">
+${inner}
+</svg>`;
+  const blob = new Blob([full], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tarjeta-${slug(document.getElementById('place').value)}.svg`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(buildPayload(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tarjeta-${slug(document.getElementById('place').value)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function sendToGallery() {
+  if (!ENDPOINT) return;
+  const btn = document.getElementById('sendBtn');
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(buildPayload())
+    });
+    const result = await res.json();
+    if (result && result.ok) {
+      btn.textContent = '¡Enviada! ✓';
+      setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2200);
+      // Refrescar la galería para que aparezca
+      setTimeout(loadCards, 1200);
+    } else {
+      throw new Error((result && result.error) || 'error');
+    }
+  } catch (e) {
+    console.error(e);
+    btn.textContent = 'Falló · reintentar';
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2500);
+  }
+}
+
+document.getElementById('author').addEventListener('input', update);
+document.getElementById('place').addEventListener('input', update);
+
+// ============================================================
+// GALERÍA: render + mapa colectivo
+// ============================================================
+function renderGalleryBlob(carta, filterId) {
+  const inner = buildBlobSVG(carta.emotions || {}, carta.seed || 0);
+  if (!inner) return '<svg class="blob" viewBox="0 0 200 200"></svg>';
+  return `<svg class="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="${filterId}" x="-10%" y="-10%" width="120%" height="120%">
+        <feGaussianBlur stdDeviation="1"/>
+      </filter>
+    </defs>
+    <g style="mix-blend-mode: multiply" filter="url(#${filterId})">${inner}</g>
+  </svg>`;
+}
+
+let bigMap = null;
+
+function renderGallery(cartas) {
+  const grid = document.getElementById('grid');
+  if (!cartas.length) {
+    grid.innerHTML = '<div class="status">Todavía no hay tarjetas. Generá la primera arriba.</div>';
+    return;
+  }
+
+  grid.innerHTML = cartas.map((c, i) => {
+    const id = `gallery-card-${i}-${slug(c.place)}`;
+    const hasCoords = typeof c.lat === 'number' && typeof c.lng === 'number';
+    const space = c.space_type ? spaceLabel(c.space_type) : '';
+    return `
+      <article class="gallery-card" id="${id}">
+        <div class="card-row">
+          ${renderGalleryBlob(c, `wc-${i}`)}
+          <div>
+            <p class="place">${escapeHTML(c.place)}</p>
+            <div class="author">${escapeHTML(c.author)}</div>
+            ${space ? `<div class="space-tag">${space}</div>` : ''}
+          </div>
+        </div>
+        ${hasCoords ? `<div class="small-map" id="miniMap-${i}"></div>` : ''}
+      </article>
+    `;
+  }).join('');
+
+  cartas.forEach((c, i) => {
+    if (typeof c.lat !== 'number' || typeof c.lng !== 'number') return;
+    const el = document.getElementById(`miniMap-${i}`);
+    if (!el) return;
+    const m = L.map(el, {
+      zoomControl: false, dragging: false, scrollWheelZoom: false,
+      doubleClickZoom: false, boxZoom: false, keyboard: false,
+      touchZoom: false, attributionControl: false,
+    }).setView([c.lat, c.lng], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(m);
+    L.marker([c.lat, c.lng], { icon: makePin(dominantColor(c.emotions)) }).addTo(m);
+    setTimeout(() => m.invalidateSize(), 200 + i * 50);
+  });
+}
+
+function renderBigMap(cartas) {
+  const container = document.getElementById('bigMap');
+  // limpiar mapa anterior si existe (cuando refrescamos después de enviar)
+  if (bigMap) { bigMap.remove(); bigMap = null; }
+  container.innerHTML = '';
+
+  const withCoords = cartas.filter(c => typeof c.lat === 'number' && typeof c.lng === 'number');
+  if (!withCoords.length) {
+    container.innerHTML = '<div class="status">Aún no hay tarjetas con ubicación.</div>';
+    return;
+  }
+
+  bigMap = L.map(container, { scrollWheelZoom: false })
+    .setView([withCoords[0].lat, withCoords[0].lng], 4);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(bigMap);
+
+  const markers = [];
+  withCoords.forEach((c) => {
+    const color = dominantColor(c.emotions);
+    const m = L.marker([c.lat, c.lng], { icon: makePin(color, true) }).addTo(bigMap);
+    const id = `gallery-card-${cartas.indexOf(c)}-${slug(c.place)}`;
+    m.bindPopup(`
+      <p class="popup-place">${escapeHTML(c.place)}</p>
+      <div class="popup-author">${escapeHTML(c.author)}</div>
+      <a class="popup-link" data-target="${id}">ver la tarjeta ↑</a>
+    `);
+    markers.push(m);
+  });
+
+  if (withCoords.length > 1) {
+    const group = L.featureGroup(markers);
+    bigMap.fitBounds(group.getBounds().pad(0.3));
+  } else {
+    bigMap.setView([withCoords[0].lat, withCoords[0].lng], 13);
+  }
+
+  bigMap.on('popupopen', e => {
+    const link = e.popup._contentNode.querySelector('.popup-link');
+    if (!link) return;
+    link.addEventListener('click', ev => {
+      ev.preventDefault();
+      const target = document.getElementById(link.dataset.target);
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('highlight');
+      setTimeout(() => target.classList.remove('highlight'), 2500);
+    });
+  });
+
+  setTimeout(() => bigMap.invalidateSize(), 300);
+}
+
+async function loadCards() {
+  if (ENDPOINT) {
+    try {
+      const res = await fetch(ENDPOINT);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) {
+          renderGallery(data);
+          renderBigMap(data);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Endpoint no disponible, probando cartas.json', e);
+    }
+  }
+  try {
+    const res = await fetch('cartas.json');
+    if (!res.ok) throw new Error('no json');
+    const data = await res.json();
+    renderGallery(data);
+    renderBigMap(data);
+  } catch (e) {
+    renderGallery(EJEMPLOS);
+    renderBigMap(EJEMPLOS);
+  }
+}
+
+const EJEMPLOS = [
+  { author: 'Sele', place: 'El patio de San Rafael',
+    lat: 9.8872, lng: -83.9895, seed: 98765, space_type: 'privado',
+    emotions: { tranquilidad: 8, libertad: 6, alegria: 4, aceptacion: 7, cuidado: 3, nostalgia: 0 } },
+];
+
+// ============================================================
+// INIT
+// ============================================================
+buildForm();
+update();
+setMarker(currentLat, currentLng);
+setTimeout(() => {
+  editorMap.invalidateSize();
+  cardMap.invalidateSize();
+}, 250);
+
+if (ENDPOINT) {
+  document.getElementById('sendBtn').style.display = '';
+}
+
+loadCards();
+</script>
+</body>
+</html>

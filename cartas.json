@@ -1,0 +1,19 @@
+[
+  {
+    "author": "Sele",
+    "place": "El patio de San Rafael",
+    "address": "San Rafael, Cartago, Costa Rica",
+    "lat": 9.8872,
+    "lng": -83.9895,
+    "space_type": "privado",
+    "seed": 98765,
+    "emotions": {
+      "aceptacion": 7,
+      "alegria": 4,
+      "cuidado": 3,
+      "libertad": 6,
+      "seguridad": 5,
+      "tranquilidad": 8
+    }
+  }
+]
