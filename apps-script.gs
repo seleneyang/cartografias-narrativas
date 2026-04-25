@@ -11,7 +11,7 @@
 // ================================================================
 
 const SHEET_NAME = 'Cartas';
-const HEADERS = ['timestamp', 'author', 'place', 'address', 'lat', 'lng', 'space_type', 'seed', 'emotions'];
+const HEADERS = ['timestamp', 'author', 'place', 'address', 'lat', 'lng', 'space_type', 'comment', 'seed', 'emotions'];
 
 function doPost(e) {
   try {
@@ -30,6 +30,7 @@ function doPost(e) {
       Number(data.lat) || '',
       Number(data.lng) || '',
       String(data.space_type || 'publico'),
+      String(data.comment || '').slice(0, 500),
       Number(data.seed) || '',
       JSON.stringify(data.emotions || {})
     ]);
