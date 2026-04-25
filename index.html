@@ -273,28 +273,47 @@
   }
 
   /* ====== EMOCIONES ====== */
+  #emotions {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 1rem;
+  }
+  @media (min-width: 600px) {
+    #emotions {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(10, auto);
+      grid-auto-flow: column;
+    }
+  }
+
   .emo {
     display: grid;
-    grid-template-columns: 22px 1fr 32px;
-    gap: 0.65rem;
+    grid-template-columns: 16px 1fr 26px;
+    gap: 0.5rem;
     align-items: center;
     padding: 0.3rem 0;
     border-bottom: 1px dashed var(--rule);
   }
   .emo:last-child { border-bottom: none; }
   .swatch {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
   }
   .emo-label {
-    font-size: 0.92rem;
+    font-size: 0.84rem;
     color: var(--ink);
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
     font-weight: 300;
+    min-width: 0;
+  }
+  .emo-label > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .emo-slider {
     width: 100%;
@@ -324,7 +343,7 @@
   .emo-val {
     font-family: 'Datatype', system-ui, sans-serif;
     font-weight: 200;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: var(--ink-soft);
     text-align: right;
     line-height: 1;
@@ -597,6 +616,165 @@
     line-height: 1.5;
     font-weight: 300;
   }
+
+  /* ====== TOGGLE DETALLE EMOCIONES ====== */
+  .blob-trigger {
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .blob-trigger:hover { opacity: 0.85; transform: scale(0.98); }
+  .blob-trigger:active { transform: scale(0.95); }
+
+  .emotions-detail {
+    display: none;
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--rule);
+  }
+  .gallery-card.open .emotions-detail,
+  .card.open .emotions-detail { display: block; }
+
+  .detail-header {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    margin-bottom: 0.6rem;
+    font-weight: 300;
+  }
+  .detail-bar {
+    display: grid;
+    grid-template-columns: 100px 1fr 30px;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.22rem 0;
+    font-size: 0.78rem;
+    color: var(--ink);
+    font-weight: 300;
+  }
+  .detail-bar .track {
+    height: 5px;
+    background: rgba(43, 45, 66, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .detail-bar .fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .detail-bar .num {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    text-align: right;
+    font-family: 'Datatype', system-ui, sans-serif;
+  }
+
+  /* ====== FILTROS ====== */
+  .filters {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 2px rgba(43, 45, 66, 0.04), 0 4px 12px rgba(43, 45, 66, 0.04);
+  }
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    margin-bottom: 0.65rem;
+  }
+  .filter-row:last-of-type { margin-bottom: 0; }
+  .filter-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--ink-soft);
+    margin-right: 0.5rem;
+    font-weight: 300;
+    flex-basis: 100%;
+  }
+  @media (min-width: 600px) {
+    .filter-label { flex-basis: auto; min-width: 140px; }
+  }
+  .filter-btn {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.78rem;
+    padding: 0.32rem 0.7rem;
+    border: 1.5px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .filter-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .filter-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .filter-btn.emotion-pill::before {
+    content: "";
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--c, var(--ink));
+    margin-right: 0.4rem;
+    vertical-align: middle;
+  }
+
+  .filter-counter {
+    margin-top: 0.85rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed var(--rule);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  /* ====== MAP + AVERAGES LAYOUT ====== */
+  .map-and-averages {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 900px) {
+    .map-and-averages {
+      grid-template-columns: 1fr 300px;
+    }
+  }
+
+  .averages-panel {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 1px 2px rgba(43, 45, 66, 0.04), 0 4px 12px rgba(43, 45, 66, 0.04);
+    align-self: start;
+  }
+  .averages-panel h3 {
+    font-family: 'Datatype', system-ui, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+    color: var(--ink);
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.005em;
+  }
+  .averages-panel .subtitle {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
   .gallery-card .small-map {
     height: 80px;
     margin-top: 1rem;
@@ -714,7 +892,7 @@
     <div class="stage">
       <div class="card" id="card">
         <div class="card-top">
-          <svg class="blob-svg" id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg class="blob-svg blob-trigger" id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" onclick="togglePreviewDetail()"></svg>
           <div class="card-meta">
             <div class="place-name" id="cardPlace">El patio de San Rafael</div>
             <div class="author-name" id="cardAuthor">Sele</div>
@@ -726,6 +904,7 @@
           <div id="cardMap" class="card-map"></div>
           <div class="card-coords" id="cardCoords">—</div>
         </div>
+        <div class="emotions-detail" id="previewDetail"></div>
       </div>
     </div>
 
@@ -743,7 +922,30 @@
     </div>
 
     <h2 class="section-title">El mapa colectivo</h2>
-    <div id="bigMap"></div>
+
+    <div class="filters">
+      <div class="filter-row">
+        <span class="filter-label">Tipo de espacio</span>
+        <button class="filter-btn active" data-filter="space" data-value="all">Todos</button>
+        <button class="filter-btn" data-filter="space" data-value="publico">Abiertos</button>
+        <button class="filter-btn" data-filter="space" data-value="privado">Cerrados</button>
+      </div>
+      <div class="filter-row" id="emotionFilters">
+        <span class="filter-label">Emoción dominante</span>
+        <button class="filter-btn active" data-filter="emotion" data-value="all">Todas</button>
+        <!-- los botones de emociones se generan por JS -->
+      </div>
+      <div class="filter-counter" id="counter">Cargando…</div>
+    </div>
+
+    <div class="map-and-averages">
+      <div id="bigMap"></div>
+      <aside class="averages-panel">
+        <h3>Promedio emocional</h3>
+        <div class="subtitle">según las tarjetas visibles · escala 0&#8211;10</div>
+        <div id="averages"></div>
+      </aside>
+    </div>
 
     <p class="attribution-note">
       Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>
@@ -818,6 +1020,32 @@ function slug(s) {
 }
 function spaceLabel(t) {
   return t === 'privado' ? 'Espacio privado / cerrado' : 'Espacio público / abierto';
+}
+function dominantEmotionKey(emotions) {
+  if (!emotions) return null;
+  let max = 0, key = null;
+  for (const [k, v] of Object.entries(emotions)) {
+    if (v > max) { max = v; key = k; }
+  }
+  return key;
+}
+function emotionsToDetailHTML(emotions) {
+  if (!emotions) return '';
+  const present = EMOTIONS
+    .map(e => ({ ...e, value: emotions[e.key] || 0 }))
+    .filter(e => e.value > 0)
+    .sort((a, b) => b.value - a.value);
+  if (!present.length) return '';
+  return `
+    <div class="detail-header">Sentimientos en este lugar · 0&#8211;10</div>
+    ${present.map(e => `
+      <div class="detail-bar">
+        <span>${e.label}</span>
+        <div class="track"><div class="fill" style="width:${e.value*10}%; background:${e.color}"></div></div>
+        <span class="num">${e.value}</span>
+      </div>
+    `).join('')}
+  `;
 }
 
 // ============================================================
@@ -1039,8 +1267,18 @@ function update() {
   document.getElementById('cardAuthor').textContent =
     document.getElementById('author').value || 'Anónimo';
   renderBlob();
+  renderPreviewDetail();
   if (editorMarker) editorMarker.setIcon(makePin(dominantColor()));
   if (cardMarker) cardMarker.setIcon(makePin(dominantColor()));
+}
+
+function renderPreviewDetail() {
+  document.getElementById('previewDetail').innerHTML =
+    emotionsToDetailHTML(getIntensitiesObj());
+}
+
+function togglePreviewDetail() {
+  document.getElementById('card').classList.toggle('open');
 }
 
 function countWords(s) {
@@ -1160,7 +1398,7 @@ let bigMap = null;
 function renderGallery(cartas) {
   const grid = document.getElementById('grid');
   if (!cartas.length) {
-    grid.innerHTML = '<div class="status">Todavía no hay tarjetas. Generá la primera arriba.</div>';
+    grid.innerHTML = '<div class="status">No hay tarjetas que coincidan con los filtros actuales.</div>';
     return;
   }
 
@@ -1170,7 +1408,7 @@ function renderGallery(cartas) {
     const space = c.space_type ? spaceLabel(c.space_type) : '';
     const comment = (c.comment || '').trim();
     return `
-      <article class="gallery-card" id="${id}">
+      <article class="gallery-card" id="${id}" data-index="${i}">
         <div class="card-row">
           ${renderGalleryBlob(c, `wc-${i}`)}
           <div>
@@ -1181,6 +1419,7 @@ function renderGallery(cartas) {
         </div>
         ${comment ? `<div class="gallery-comment">${escapeHTML(comment)}</div>` : ''}
         ${hasCoords ? `<div class="small-map" id="miniMap-${i}"></div>` : ''}
+        <div class="emotions-detail">${emotionsToDetailHTML(c.emotions)}</div>
       </article>
     `;
   }).join('');
@@ -1199,6 +1438,15 @@ function renderGallery(cartas) {
     setTimeout(() => m.invalidateSize(), 200 + i * 50);
   });
 }
+
+// Click delegado en la galería: tocar la mancha abre/cierra el detalle
+document.getElementById('grid').addEventListener('click', (e) => {
+  const blob = e.target.closest('svg.blob');
+  if (!blob) return;
+  const card = blob.closest('.gallery-card');
+  if (!card) return;
+  card.classList.toggle('open');
+});
 
 function renderBigMap(cartas) {
   const container = document.getElementById('bigMap');
@@ -1256,6 +1504,127 @@ function renderBigMap(cartas) {
   setTimeout(() => bigMap.invalidateSize(), 300);
 }
 
+// ============================================================
+// FILTROS, PROMEDIOS Y ARQUITECTURA DE GALERÍA
+// ============================================================
+let allCartas = [];
+let currentFilters = { space: 'all', emotion: 'all' };
+
+function buildEmotionFilters() {
+  const row = document.getElementById('emotionFilters');
+  // Encontrar qué emociones aparecen al menos como dominantes en las tarjetas
+  const dominantSet = new Set();
+  allCartas.forEach(c => {
+    const dom = dominantEmotionKey(c.emotions);
+    if (dom) dominantSet.add(dom);
+  });
+
+  // Reset row: mantener label + "Todas", borrar emociones previas
+  row.querySelectorAll('.filter-btn[data-value]:not([data-value="all"])').forEach(b => b.remove());
+
+  // Crear pills para emociones presentes (en orden alfabético del array EMOTIONS)
+  EMOTIONS.forEach(e => {
+    if (!dominantSet.has(e.key)) return;
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn emotion-pill';
+    btn.dataset.filter = 'emotion';
+    btn.dataset.value = e.key;
+    btn.style.setProperty('--c', e.color);
+    btn.textContent = e.label;
+    btn.addEventListener('click', () => {
+      currentFilters.emotion = e.key;
+      updateFilterButtons();
+      applyFilters();
+    });
+    row.appendChild(btn);
+  });
+}
+
+function updateFilterButtons() {
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    const filterKind = btn.dataset.filter;
+    btn.classList.toggle('active', currentFilters[filterKind] === btn.dataset.value);
+  });
+}
+
+function applyFilters() {
+  const visible = allCartas.filter(c => {
+    if (currentFilters.space !== 'all') {
+      const sp = c.space_type || 'publico';
+      if (sp !== currentFilters.space) return false;
+    }
+    if (currentFilters.emotion !== 'all') {
+      if (dominantEmotionKey(c.emotions) !== currentFilters.emotion) return false;
+    }
+    return true;
+  });
+  renderGallery(visible);
+  renderBigMap(visible);
+  renderAverages(visible);
+  updateCounter(visible.length, allCartas.length);
+}
+
+function updateCounter(visibleCount, total) {
+  const counter = document.getElementById('counter');
+  if (total === 0) {
+    counter.textContent = 'Todavía no hay tarjetas en la galería.';
+  } else if (visibleCount === total) {
+    counter.textContent = `Mostrando ${total} ${total === 1 ? 'tarjeta' : 'tarjetas'}.`;
+  } else {
+    counter.textContent = `Mostrando ${visibleCount} de ${total} tarjetas según los filtros.`;
+  }
+}
+
+function renderAverages(cartas) {
+  const container = document.getElementById('averages');
+  if (!cartas.length) {
+    container.innerHTML = '<div style="font-style:italic; color:var(--ink-soft); font-size:0.85rem;">Sin tarjetas para promediar.</div>';
+    return;
+  }
+
+  // Promediar cada emoción solo entre tarjetas que la tienen >0
+  // (así "alegría: 7" no se diluye con tarjetas que no la sintieron)
+  // Pero también queremos mostrar la magnitud, así que promediamos sobre TODAS las visibles
+  // dividiendo por el total — eso da "qué tan presente está esta emoción en el conjunto".
+  const sums = {};
+  EMOTIONS.forEach(e => { sums[e.key] = 0; });
+  cartas.forEach(c => {
+    if (!c.emotions) return;
+    for (const [k, v] of Object.entries(c.emotions)) {
+      if (sums[k] !== undefined) sums[k] += (v || 0);
+    }
+  });
+  const averages = EMOTIONS.map(e => ({
+    ...e,
+    avg: sums[e.key] / cartas.length
+  }))
+  .filter(e => e.avg > 0)
+  .sort((a, b) => b.avg - a.avg);
+
+  if (!averages.length) {
+    container.innerHTML = '<div style="font-style:italic; color:var(--ink-soft); font-size:0.85rem;">Estas tarjetas no registran emociones.</div>';
+    return;
+  }
+
+  container.innerHTML = averages.map(e => `
+    <div class="detail-bar">
+      <span>${e.label}</span>
+      <div class="track"><div class="fill" style="width:${(e.avg/10)*100}%; background:${e.color}"></div></div>
+      <span class="num">${e.avg.toFixed(1)}</span>
+    </div>
+  `).join('');
+}
+
+// Listener para filtros con value fijo ("Todos" / "Todas" / "Abiertos" / "Cerrados")
+document.querySelectorAll('.filter-btn[data-filter][data-value]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const kind = btn.dataset.filter;
+    currentFilters[kind] = btn.dataset.value;
+    updateFilterButtons();
+    applyFilters();
+  });
+});
+
 async function loadCards() {
   if (ENDPOINT) {
     try {
@@ -1263,8 +1632,9 @@ async function loadCards() {
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length) {
-          renderGallery(data);
-          renderBigMap(data);
+          allCartas = data;
+          buildEmotionFilters();
+          applyFilters();
           return;
         }
       }
@@ -1276,12 +1646,12 @@ async function loadCards() {
     const res = await fetch('cartas.json');
     if (!res.ok) throw new Error('no json');
     const data = await res.json();
-    renderGallery(data);
-    renderBigMap(data);
+    allCartas = data;
   } catch (e) {
-    renderGallery(EJEMPLOS);
-    renderBigMap(EJEMPLOS);
+    allCartas = EJEMPLOS;
   }
+  buildEmotionFilters();
+  applyFilters();
 }
 
 const EJEMPLOS = [
