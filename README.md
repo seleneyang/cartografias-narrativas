@@ -4,7 +4,7 @@ Una pequeña web colectiva para compartir lugares amados.
 
 Este es un proyecto de exploración para entender cuáles son los sentimientos que nos generan los espacios que habitamos. Cada persona elige un lugar que le importa, lo ubica en el mapa, marca si es público o privado, y le pone "color emocional" eligiendo qué siente cuando piensa en él.
 
-🌐 **Sitio en vivo:** [seleneyang.github.io/cartografias-narrativas](https://seleneyang.github.io/cartografias-narrativas/)
+**Sitio en vivo:** [seleneyang.github.io/cartografias-narrativas](https://seleneyang.github.io/cartografias-narrativas/)
 
 ---
 
