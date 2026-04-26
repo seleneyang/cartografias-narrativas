@@ -1,12 +1,12 @@
 [
   {
-    "author": "Sele",
-    "place": "El patio de San Rafael",
-    "address": "San Rafael, Cartago, Costa Rica",
+    "author": "Tu nombre",
+    "place": "El nombre del lugar",
+    "address": " ",
     "lat": 9.8872,
     "lng": -83.9895,
     "space_type": "privado",
-    "comment": "Las mañanas de niebla bajan despacio desde Cartago y se quedan un rato. Si llueve, llueve fuerte pero dura poco. Después el aire huele distinto.",
+    "comment": "Un ejemplo de texto sobre lo que piensas del lugar que estás agregando",
     "seed": 98765,
     "emotions": {
       "aceptacion": 7,
