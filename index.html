@@ -1152,7 +1152,7 @@ const I18N = {
     preview_place_placeholder: 'Un lugar',
     section_location: 'Ubicación',
     label_address: 'Dirección para buscar',
-    placeholder_address: 'ej. Clementi Ave 2, Singapore',
+    placeholder_address: 'ej. San José, Costa Rica',
     btn_search: 'Buscar',
     map_hint: 'Click o arrastrá el pin para ajustar',
     section_space: 'Tipo de espacio',
@@ -1221,7 +1221,7 @@ const I18N = {
     preview_place_placeholder: 'A place',
     section_location: 'Location',
     label_address: 'Address to search',
-    placeholder_address: 'e.g. Clementi Ave 2, Singapore',
+    placeholder_address: 'e.g. San José, Costa Rica',
     btn_search: 'Search',
     map_hint: 'Click or drag the pin to adjust',
     section_space: 'Type of space',
@@ -1290,7 +1290,7 @@ const I18N = {
     preview_place_placeholder: 'Un lieu',
     section_location: 'Emplacement',
     label_address: 'Adresse à rechercher',
-    placeholder_address: 'ex. Clementi Ave 2, Singapour',
+    placeholder_address: 'ex. San José, Costa Rica',
     btn_search: 'Rechercher',
     map_hint: 'Clique ou fais glisser le pin pour ajuster',
     section_space: 'Type d\'espace',
@@ -1359,7 +1359,7 @@ const I18N = {
     preview_place_placeholder: 'Um lugar',
     section_location: 'Localização',
     label_address: 'Endereço para buscar',
-    placeholder_address: 'ex. Clementi Ave 2, Singapura',
+    placeholder_address: 'ex. San José, Costa Rica',
     btn_search: 'Buscar',
     map_hint: 'Clique ou arraste o pino para ajustar',
     section_space: 'Tipo de espaço',
@@ -1494,8 +1494,8 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 // ============================================================
 // ESTADO
 // ============================================================
-let currentLat = 9.8872;
-let currentLng = -83.9895;
+let currentLat = 9.9328;
+let currentLng = -84.0796;
 let currentSpace = 'publico';
 let seed = Math.floor(Math.random() * 1e9);
 
@@ -2031,7 +2031,7 @@ function renderBigMap(cartas) {
   }
 
   bigMap = L.map(container, { scrollWheelZoom: false })
-    .setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 4);
+    .setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 5);
   window._bigMapInstance = bigMap;
 
   L.tileLayer(TILE_URL, {
@@ -2051,12 +2051,11 @@ function renderBigMap(cartas) {
     bigMapMarkers[idx] = m;  // mapear índice global al marker
   });
 
-  if (cartasWithCoords.length > 1) {
-    const group = L.featureGroup(markers);
-    bigMap.fitBounds(group.getBounds().pad(0.3), { maxZoom: 6, minZoom: 2 });
-  } else {
-    bigMap.setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 13);
-  }
+  // Centrar en la primera tarjeta (más reciente) con zoom regional cómodo.
+  // El usuario puede arrastrar/zoom para explorar el resto.
+  const center = [cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng];
+  const initialZoom = cartasWithCoords.length === 1 ? 13 : 5;
+  bigMap.setView(center, initialZoom);
 
   setTimeout(() => bigMap.invalidateSize(), 300);
   // Re-invalidar después de que el panel de promedios termine de medirse
