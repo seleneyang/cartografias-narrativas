@@ -823,6 +823,10 @@
     margin-bottom: 1.5rem;
     box-shadow: 0 1px 2px rgba(43, 45, 66, 0.04), 0 4px 12px rgba(43, 45, 66, 0.04);
   }
+  .filters.gallery-filters {
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
   .filter-row {
     display: flex;
     flex-wrap: wrap;
@@ -1059,6 +1063,16 @@
   <!-- ===== GALERÍA INTEGRADA ===== -->
   <section class="gallery-section">
     <h2 class="section-title" data-i18n="gallery_title">Las tarjetas</h2>
+
+    <div class="filters gallery-filters">
+      <div class="filter-row">
+        <span class="filter-label" data-i18n="filter_sort">Ordenar por</span>
+        <button class="filter-btn active" data-filter="sort" data-value="newest" data-i18n="sort_newest">Más nuevas</button>
+        <button class="filter-btn" data-filter="sort" data-value="oldest" data-i18n="sort_oldest">Más antiguas</button>
+        <button class="filter-btn" data-filter="sort" data-value="alpha" data-i18n="sort_alpha">A–Z</button>
+      </div>
+    </div>
+
     <div id="grid" class="grid">
       <div class="status" data-i18n="loading">Cargando tarjetas…</div>
     </div>
@@ -1082,12 +1096,6 @@
       <div class="filter-row" id="emotionFilters">
         <span class="filter-label" data-i18n="filter_emotion">Emoción dominante</span>
         <button class="filter-btn active" data-filter="emotion" data-value="all" data-i18n="filter_all_f">Todas</button>
-      </div>
-      <div class="filter-row">
-        <span class="filter-label" data-i18n="filter_sort">Ordenar por</span>
-        <button class="filter-btn active" data-filter="sort" data-value="newest" data-i18n="sort_newest">Más nuevas</button>
-        <button class="filter-btn" data-filter="sort" data-value="oldest" data-i18n="sort_oldest">Más antiguas</button>
-        <button class="filter-btn" data-filter="sort" data-value="alpha" data-i18n="sort_alpha">A–Z</button>
       </div>
       <div class="filter-counter" id="counter" data-i18n="loading">Cargando…</div>
     </div>
@@ -2031,7 +2039,7 @@ function renderBigMap(cartas) {
   }
 
   bigMap = L.map(container, { scrollWheelZoom: false })
-    .setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 5);
+    .setView([-5, -65], 3);
   window._bigMapInstance = bigMap;
 
   L.tileLayer(TILE_URL, {
@@ -2051,11 +2059,16 @@ function renderBigMap(cartas) {
     bigMapMarkers[idx] = m;  // mapear índice global al marker
   });
 
-  // Centrar en la primera tarjeta (más reciente) con zoom regional cómodo.
+  // Centro fijo en América Latina con zoom continental.
   // El usuario puede arrastrar/zoom para explorar el resto.
-  const center = [cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng];
-  const initialZoom = cartasWithCoords.length === 1 ? 13 : 5;
-  bigMap.setView(center, initialZoom);
+  const LATIN_AMERICA_CENTER = [-5, -65];
+  const LATIN_AMERICA_ZOOM = 3;
+  if (cartasWithCoords.length === 1) {
+    // Si hay una sola tarjeta, centrarla con zoom local
+    bigMap.setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 13);
+  } else {
+    bigMap.setView(LATIN_AMERICA_CENTER, LATIN_AMERICA_ZOOM);
+  }
 
   setTimeout(() => bigMap.invalidateSize(), 300);
   // Re-invalidar después de que el panel de promedios termine de medirse
