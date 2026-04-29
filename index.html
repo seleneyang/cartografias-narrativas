@@ -1101,8 +1101,8 @@
       </aside>
     </div>
 
-    <p class="attribution-note">
-      Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a> · tiles © <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>
+    <p class="attribution-note" id="footerAttribution">
+      Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>
     </p>
   </section>
 
@@ -1113,6 +1113,26 @@
 // CONFIG
 // ============================================================
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxaKMpyp9YmTdvpmn-LI7beUCPsPUbP_Icth5fk_m-TSSph_fSIReRCIRQkyx6njL72/exec';
+
+// ============================================================
+// MAP TILES — Mapbox con estilo custom
+// Si MAPBOX_TOKEN está vacío, usa CARTO Positron como fallback.
+// ============================================================
+const MAPBOX_TOKEN = 'pk.eyJ1Ijoic2VsZW5leWFuZyIsImEiOiJjbW9ra2p4YjQwMXd3MnFvbmw1NDlobW04In0.O5WciSJ62RF9w8Gn0xj9UA';
+const MAPBOX_USERNAME = 'seleneyang';
+const MAPBOX_STYLE_ID = 'cmokk8tmd004301s7ckat41nf';
+
+const TILE_URL = MAPBOX_TOKEN
+  ? `https://api.mapbox.com/styles/v1/${MAPBOX_USERNAME}/${MAPBOX_STYLE_ID}/tiles/512/{z}/{x}/{y}{r}?access_token=${MAPBOX_TOKEN}`
+  : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+const TILE_OPTIONS = MAPBOX_TOKEN
+  ? { maxZoom: 18, tileSize: 512, zoomOffset: -1 }
+  : { maxZoom: 18 };
+
+const TILE_ATTRIBUTION = MAPBOX_TOKEN
+  ? '&copy; <a href="https://www.mapbox.com/about/maps/" target="_blank">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+  : '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>';
 
 // ============================================================
 // I18N — traducciones de la UI
@@ -1541,9 +1561,9 @@ const editorMap = L.map('editorMap', {
   scrollWheelZoom: false,
 }).setView([currentLat, currentLng], 13);
 
-L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-  maxZoom: 18,
-  attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+L.tileLayer(TILE_URL, {
+  ...TILE_OPTIONS,
+  attribution: TILE_ATTRIBUTION
 }).addTo(editorMap);
 
 const cardMap = L.map('cardMap', {
@@ -1552,7 +1572,7 @@ const cardMap = L.map('cardMap', {
   touchZoom: false, attributionControl: false,
 }).setView([currentLat, currentLng], 13);
 
-L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(cardMap);
+L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(cardMap);
 
 let editorMarker = null;
 let cardMarker = null;
@@ -1937,7 +1957,7 @@ function renderGallery(cartas) {
       doubleClickZoom: false, boxZoom: false, keyboard: false,
       touchZoom: false, attributionControl: false,
     }).setView([c.lat, c.lng], 13);
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(m);
+    L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(m);
     L.marker([c.lat, c.lng], { icon: makePin(dominantColor(c.emotions)) }).addTo(m);
     setTimeout(() => m.invalidateSize(), 200 + idx * 50);
   });
@@ -2014,9 +2034,9 @@ function renderBigMap(cartas) {
     .setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 4);
   window._bigMapInstance = bigMap;
 
-  L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+  L.tileLayer(TILE_URL, {
+    ...TILE_OPTIONS,
+    attribution: TILE_ATTRIBUTION
   }).addTo(bigMap);
 
   const markers = [];
