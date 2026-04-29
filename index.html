@@ -2136,11 +2136,10 @@ function applyFilters() {
   // Ordenar según filtro
   if (currentFilters.sort === 'alpha') {
     filteredCartas.sort((a, b) => {
-      const na = (a.place || '').toLocaleLowerCase();
-      const nb = (b.place || '').toLocaleLowerCase();
+      const na = (a.author || '').toLocaleLowerCase();
+      const nb = (b.author || '').toLocaleLowerCase();
       return na.localeCompare(nb);
     });
-    console.log('[SORT A-Z] Primeras 6 tarjetas:', filteredCartas.slice(0, 6).map(c => c.place));
   } else {
     // newest | oldest
     filteredCartas.sort((a, b) => {
@@ -2148,7 +2147,6 @@ function applyFilters() {
       const tb = b.generated_at ? new Date(b.generated_at).getTime() : 0;
       return currentFilters.sort === 'oldest' ? ta - tb : tb - ta;
     });
-    console.log(`[SORT ${currentFilters.sort}] Primeras 6:`, filteredCartas.slice(0, 6).map(c => `${c.place} (${c.generated_at})`));
   }
 
   currentPage = 0;
