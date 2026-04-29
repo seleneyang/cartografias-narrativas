@@ -48,6 +48,7 @@
     color: var(--ink);
     font-family: 'ElmsSans', system-ui, sans-serif;
     font-weight: 300;
+    font-size: 16.5px;
     min-height: 100vh;
   }
 
@@ -152,7 +153,7 @@
   .lead {
     max-width: 640px;
     margin: 1.25rem 0 0;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     line-height: 1.65;
     color: var(--ink-soft);
     font-weight: 300;
@@ -171,7 +172,7 @@
     align-items: start;
   }
   @media (min-width: 900px) {
-    .layout { grid-template-columns: 400px 1fr; gap: 3rem; }
+    .layout { grid-template-columns: 480px 1fr; gap: 2.5rem; }
     .stage { position: sticky; top: 2rem; }
   }
 
@@ -335,7 +336,7 @@
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
   }
   .emo-label {
-    font-size: 0.84rem;
+    font-size: 0.92rem;
     color: var(--ink);
     display: flex;
     flex-direction: column;
@@ -361,22 +362,22 @@
     appearance: none;
     width: 14px; height: 14px;
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--ink);
     border: 2px solid var(--card);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     cursor: pointer;
   }
   .emo-slider::-moz-range-thumb {
     width: 14px; height: 14px;
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--ink);
     border: 2px solid var(--card);
     cursor: pointer;
   }
   .emo-val {
     font-family: 'Datatype', system-ui, sans-serif;
     font-weight: 200;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: var(--ink-soft);
     text-align: right;
     line-height: 1;
@@ -731,7 +732,7 @@
   .gallery-card .place {
     font-family: 'ElmsSans', system-ui, sans-serif;
     font-weight: 300;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--ink-soft);
     margin: 0 0 0.5rem;
     line-height: 1.4;
@@ -739,13 +740,13 @@
   .gallery-card .author {
     font-family: 'Datatype', system-ui, sans-serif;
     font-weight: 200;
-    font-size: 1.65rem;
+    font-size: 1.75rem;
     color: var(--ink);
     line-height: 1;
   }
   .gallery-card .space-tag {
     display: inline-block;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--accent);
@@ -753,12 +754,12 @@
   }
   .gallery-card .gallery-comment {
     margin-top: 1rem;
-    padding: 0.6rem 0 0.6rem 0.85rem;
+    padding: 0.65rem 0 0.65rem 0.9rem;
     border-left: 2px solid var(--accent);
     font-style: italic;
     color: var(--ink);
-    font-size: 0.82rem;
-    line-height: 1.5;
+    font-size: 0.88rem;
+    line-height: 1.55;
     font-weight: 300;
   }
 
@@ -791,13 +792,19 @@
   }
   .detail-bar {
     display: grid;
-    grid-template-columns: minmax(80px, 100px) 1fr 26px;
-    gap: 0.5rem;
+    grid-template-columns: minmax(90px, 110px) 1fr 28px;
+    gap: 0.55rem;
     align-items: center;
-    padding: 0.22rem 0;
-    font-size: 0.78rem;
+    padding: 0.25rem 0;
+    font-size: 0.84rem;
     color: var(--ink);
     font-weight: 300;
+  }
+  .detail-bar .num {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-align: right;
+    font-family: 'Datatype', system-ui, sans-serif;
   }
   .detail-bar .track {
     height: 5px;
@@ -808,12 +815,6 @@
   .detail-bar .fill {
     height: 100%;
     border-radius: 3px;
-  }
-  .detail-bar .num {
-    font-size: 0.72rem;
-    color: var(--ink-soft);
-    text-align: right;
-    font-family: 'Datatype', system-ui, sans-serif;
   }
 
   /* ====== FILTROS ====== */
@@ -834,7 +835,7 @@
   }
   .filter-row:last-of-type { margin-bottom: 0; }
   .filter-label {
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.13em;
     color: var(--ink-soft);
@@ -843,17 +844,17 @@
     flex-basis: 100%;
   }
   @media (min-width: 600px) {
-    .filter-label { flex-basis: auto; min-width: 140px; }
+    .filter-label { flex-basis: auto; min-width: 150px; }
   }
   .filter-btn {
     font-family: 'ElmsSans', system-ui, sans-serif;
     font-weight: 300;
-    font-size: 0.78rem;
-    padding: 0.32rem 0.7rem;
+    font-size: 0.85rem;
+    padding: 0.38rem 0.85rem;
     border: 1.5px solid var(--rule);
     background: transparent;
     color: var(--ink-soft);
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.15s;
     letter-spacing: 0.01em;
@@ -881,7 +882,7 @@
     margin-top: 0.85rem;
     padding-top: 0.6rem;
     border-top: 1px dashed var(--rule);
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     color: var(--ink-soft);
     font-style: italic;
   }
@@ -891,10 +892,11 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    align-items: stretch;
   }
   @media (min-width: 900px) {
     .map-and-averages {
-      grid-template-columns: 1fr 300px;
+      grid-template-columns: 1fr 320px;
     }
   }
 
@@ -904,18 +906,17 @@
     border-radius: 8px;
     padding: 1.25rem 1.4rem;
     box-shadow: 0 1px 2px rgba(43, 45, 66, 0.04), 0 4px 12px rgba(43, 45, 66, 0.04);
-    align-self: start;
   }
   .averages-panel h3 {
     font-family: 'Datatype', system-ui, sans-serif;
     font-weight: 200;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--ink);
     margin: 0 0 0.25rem;
     letter-spacing: -0.005em;
   }
   .averages-panel .subtitle {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--ink-soft);
     font-style: italic;
     margin-bottom: 1rem;
@@ -928,7 +929,8 @@
     grid-column: 1 / -1;
   }
   #bigMap {
-    height: 520px;
+    height: 100%;
+    min-height: 520px;
     border-radius: 8px;
     border: 1px solid var(--rule);
     box-shadow: 0 2px 4px rgba(43, 45, 66, 0.04), 0 12px 28px rgba(43, 45, 66, 0.06);
@@ -1037,8 +1039,8 @@
         <div class="card-top">
           <svg class="blob-svg blob-trigger" id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" onclick="togglePreviewDetail()"></svg>
           <div class="card-meta">
-            <div class="place-name" id="cardPlace">Ejemplo de nombre de lugar</div>
-            <div class="author-name" id="cardAuthor">Tu nombre o alias</div>
+            <div class="place-name" id="cardPlace">El patio de San Rafael</div>
+            <div class="author-name" id="cardAuthor">Sele</div>
             <div class="space-tag" id="cardSpaceTag">Espacio público / abierto</div>
           </div>
         </div>
@@ -1084,6 +1086,12 @@
         <span class="filter-label" data-i18n="filter_emotion">Emoción dominante</span>
         <button class="filter-btn active" data-filter="emotion" data-value="all" data-i18n="filter_all_f">Todas</button>
       </div>
+      <div class="filter-row">
+        <span class="filter-label" data-i18n="filter_sort">Ordenar por</span>
+        <button class="filter-btn active" data-filter="sort" data-value="newest" data-i18n="sort_newest">Más nuevas</button>
+        <button class="filter-btn" data-filter="sort" data-value="oldest" data-i18n="sort_oldest">Más antiguas</button>
+        <button class="filter-btn" data-filter="sort" data-value="alpha" data-i18n="sort_alpha">A–Z</button>
+      </div>
       <div class="filter-counter" id="counter" data-i18n="loading">Cargando…</div>
     </div>
 
@@ -1097,7 +1105,7 @@
     </div>
 
     <p class="attribution-note">
-      Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>
+      Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a> · tiles © <a href="https://carto.com/attributions" target="_blank">CARTO</a>
     </p>
   </section>
 
@@ -1153,6 +1161,10 @@ const I18N = {
     filter_closed: 'Cerrados',
     filter_emotion: 'Emoción dominante',
     filter_all_f: 'Todas',
+    filter_sort: 'Ordenar por',
+    sort_newest: 'Más nuevas',
+    sort_oldest: 'Más antiguas',
+    sort_alpha: 'A–Z',
     avg_title: 'Promedio emocional',
     avg_subtitle: 'según las tarjetas visibles · escala 0–10',
     loading: 'Cargando…',
@@ -1218,6 +1230,10 @@ const I18N = {
     filter_closed: 'Closed',
     filter_emotion: 'Dominant emotion',
     filter_all_f: 'All',
+    filter_sort: 'Sort by',
+    sort_newest: 'Newest',
+    sort_oldest: 'Oldest',
+    sort_alpha: 'A–Z',
     avg_title: 'Emotional average',
     avg_subtitle: 'across visible cards · scale 0–10',
     loading: 'Loading…',
@@ -1283,6 +1299,10 @@ const I18N = {
     filter_closed: 'Fermés',
     filter_emotion: 'Émotion dominante',
     filter_all_f: 'Toutes',
+    filter_sort: 'Trier par',
+    sort_newest: 'Plus récentes',
+    sort_oldest: 'Plus anciennes',
+    sort_alpha: 'A–Z',
     avg_title: 'Moyenne émotionnelle',
     avg_subtitle: 'selon les cartes visibles · échelle 0–10',
     loading: 'Chargement…',
@@ -1348,6 +1368,10 @@ const I18N = {
     filter_closed: 'Fechados',
     filter_emotion: 'Emoção dominante',
     filter_all_f: 'Todas',
+    filter_sort: 'Ordenar por',
+    sort_newest: 'Mais recentes',
+    sort_oldest: 'Mais antigas',
+    sort_alpha: 'A–Z',
     avg_title: 'Média emocional',
     avg_subtitle: 'segundo os cartões visíveis · escala 0–10',
     loading: 'Carregando…',
@@ -1520,9 +1544,9 @@ const editorMap = L.map('editorMap', {
   scrollWheelZoom: false,
 }).setView([currentLat, currentLng], 13);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
   maxZoom: 18,
-  attribution: '&copy; OpenStreetMap'
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(editorMap);
 
 const cardMap = L.map('cardMap', {
@@ -1531,7 +1555,7 @@ const cardMap = L.map('cardMap', {
   touchZoom: false, attributionControl: false,
 }).setView([currentLat, currentLng], 13);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(cardMap);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(cardMap);
 
 let editorMarker = null;
 let cardMarker = null;
@@ -1916,7 +1940,7 @@ function renderGallery(cartas) {
       doubleClickZoom: false, boxZoom: false, keyboard: false,
       touchZoom: false, attributionControl: false,
     }).setView([c.lat, c.lng], 13);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(m);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(m);
     L.marker([c.lat, c.lng], { icon: makePin(dominantColor(c.emotions)) }).addTo(m);
     setTimeout(() => m.invalidateSize(), 200 + idx * 50);
   });
@@ -1993,9 +2017,9 @@ function renderBigMap(cartas) {
     .setView([cartasWithCoords[0].c.lat, cartasWithCoords[0].c.lng], 4);
   window._bigMapInstance = bigMap;
 
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     maxZoom: 18,
-    attribution: '&copy; OpenStreetMap'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
   }).addTo(bigMap);
 
   const markers = [];
@@ -2018,6 +2042,8 @@ function renderBigMap(cartas) {
   }
 
   setTimeout(() => bigMap.invalidateSize(), 300);
+  // Re-invalidar después de que el panel de promedios termine de medirse
+  setTimeout(() => bigMap.invalidateSize(), 800);
 }
 
 // ============================================================
@@ -2025,9 +2051,9 @@ function renderBigMap(cartas) {
 // ============================================================
 let allCartas = [];
 let filteredCartas = [];
-let currentFilters = { space: 'all', emotion: 'all' };
+let currentFilters = { space: 'all', emotion: 'all', sort: 'newest' };
 let currentPage = 0;
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 6;
 
 function buildEmotionFilters() {
   const row = document.getElementById('emotionFilters');
@@ -2077,12 +2103,23 @@ function applyFilters() {
     }
     return true;
   });
-  // Las tarjetas más recientes primero
-  filteredCartas.sort((a, b) => {
-    const ta = a.generated_at ? new Date(a.generated_at).getTime() : 0;
-    const tb = b.generated_at ? new Date(b.generated_at).getTime() : 0;
-    return tb - ta;
-  });
+
+  // Ordenar según filtro
+  if (currentFilters.sort === 'alpha') {
+    filteredCartas.sort((a, b) => {
+      const na = (a.place || '').toLocaleLowerCase();
+      const nb = (b.place || '').toLocaleLowerCase();
+      return na.localeCompare(nb);
+    });
+  } else {
+    // newest | oldest
+    filteredCartas.sort((a, b) => {
+      const ta = a.generated_at ? new Date(a.generated_at).getTime() : 0;
+      const tb = b.generated_at ? new Date(b.generated_at).getTime() : 0;
+      return currentFilters.sort === 'oldest' ? ta - tb : tb - ta;
+    });
+  }
+
   currentPage = 0;
   renderGallery(filteredCartas);
   renderBigMap(filteredCartas);
@@ -2173,7 +2210,7 @@ async function loadCards() {
 }
 
 const EJEMPLOS = [
-  { author: 'Tu nombre o alias', place: 'Ejemplo del nombre de un lugar',
+  { author: 'Sele', place: 'El patio de San Rafael',
     lat: 9.8872, lng: -83.9895, seed: 98765, space_type: 'privado',
     emotions: { tranquilidad: 8, libertad: 6, alegria: 4, aceptacion: 7, cuidado: 3, nostalgia: 0 } },
 ];
